@@ -1,24 +1,17 @@
-# Which colums to use as input for the nerual network
-columns = ['Close','Volume','Low','High']
+# do some now & past predictions
+for t in [0, 100, 200, 300, 500, 1000, 2000]:
+    rt_x, prediction = predict(time.time()-t*period)
 
-# Which currency pair are we interested in predicting
-pair = 'BTC_ETH' # or 'USDT_BTC'
+    current = rt_x[:,0]
+    prediction = prediction[0]
 
-CONFIG = {
-    'pair': pair,
-    'period': 300,
-    'input_size': 30,
-    'output_size': 12,
-    'lstm_hidden_size': 50,
-    'columns' : columns,
-    'csv_src_file' : pair,
-    'name': 'lstm',
-    'folder': {
-        'data': 'data/',
-        'weights': 'weights/',
-        }
-}
+    pyplot.plot(current, label='current')
 
-CONFIG['filename'] = pair+'_'+CONFIG['name']+"_i%d_o%d_" %(CONFIG['input_size'],CONFIG['output_size']) + '_'.join(columns)
+    # shift train predictions for plotting
+    predictPlot = np.empty_like(current)
+    predictPlot[:] = np.nan
+    predictPlot = np.append(predictPlot, prediction)
 
-
+    pyplot.plot(predictPlot, label='prediction')
+    pyplot.legend()
+    pyplot.show()
